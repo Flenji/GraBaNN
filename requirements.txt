@@ -1,5 +1,7 @@
-torch
+torch==2.0.0
 networkx
-torch_geometric
+torch_geometric==2.3.0
 torchmetrics
 matplotlib
+pandas
+ipykernel

@@ -106,6 +106,8 @@ def test(loader, model):
 def collate(dataList):
     return Batch.from_data_list(dataList)
 
+
+
 if __name__=='__main__':
     datasetCreator = synthetic_graph_gen.DatasetCreator(1, 128, 128)
     dataset = datasetCreator.getDataset(8)
