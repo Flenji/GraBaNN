@@ -2,6 +2,8 @@ import torch
 from torch_geometric.data import Data
 import numpy as np
 import itertools
+import networkx as nx
+import torch_geometric
 
 
 
@@ -66,3 +68,12 @@ class RedRatioGraphs():
             return 1
         else:
             return 0
+    
+    def printGraph(data): 
+        g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
+        #nx.draw_networkx(g, with_labels = True)
+    
+        feature_vector = data.x.numpy()
+    
+        # Plot the graph with node colors based on the feature vector
+        nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
