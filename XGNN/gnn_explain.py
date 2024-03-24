@@ -231,7 +231,7 @@ class gnn_explain():
         X_new = torch.from_numpy(X_new)
         A_new = torch.from_numpy(A_new)
         
-        data = self.convertNxToData(self.graph)
+        data = self.convertNxToData(cur_graph)#self.graph)
         logits, probs = self.gnnNets(data.x,data.edge_index) #***#self.gnnNets(X_new.float(), A_new.float())  
         ### Todo
         reward = probs.squeeze()[self.target_class] - 0.5
@@ -287,12 +287,15 @@ class gnn_explain():
     def graph_reset(self):
         self.graph.clear()
         rand_label = random.randint(0,self.node_type-1)
-        if self.starting_node:
+        if self.starting_node != None:
+            #print(self.starting_node)
             self.graph.add_node(0, label= self.starting_node)# rand_label)#0)#self.dict = {0:'C', 1:'N', 2:'O', 3:'F', 4:'I', 5:'Cl', 6:'Br'}
         else:
+            #print(self.starting_node)
             self.graph.add_node(0, label= rand_label)
        # self.graph.add_edge(1, 3)
         self.step = 0
+        #print(self.max_node)
         return 
     
                        
