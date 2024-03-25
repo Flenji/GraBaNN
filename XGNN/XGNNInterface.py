@@ -4,7 +4,7 @@ Created on Mon Mar 18 10:58:24 2024
 
 @author: hanne
 """
-
+from policy_nn import PolicyNN
 from gnn_explain import gnn_explain
 import networkx as nx
 import torch
@@ -66,22 +66,23 @@ class XGNNInterface(gnn_explain):
     
     
     def __init__(self,max_node, max_step, target_class, max_iters, number_node_types,
-                  model, convertNxToData, starting_node =None, roll_out_alpha = 2, 
+                  model, convertNxToData, starting_node =None,reward_stepwise = 0.1, roll_out_alpha = 2,learning_rate = 0.01, 
                   checkpoint = "./checkpoint/ckpt.pth"):
         super(XGNNInterface, self).__init__(max_node, max_step, target_class, max_iters)
         self.target_class = target_class
         #self.criterion = criterion
         #self.optimizer = optimizer
-        
+        self.learning_rate = learning_rate
+        self.reward_stepwise= reward_stepwise
         #self.dict = label_dict
         self.gnnNets = model
         self.roll_out_alpha = roll_out_alpha
-        
+        self.node_type = number_node_types
         self.convertNxToData = convertNxToData
         #self.encoding_dict = encoding_dict
-        
         self.starting_node = starting_node
         self.checkpoint = checkpoint
+        self.policyNets= PolicyNN(self.node_type, self.node_type)
         
 if __name__ == '__main__':
     import classificationNetwork as cN
@@ -92,7 +93,7 @@ if __name__ == '__main__':
     #graph with 5 nodes, max 10 edges, class 1, 50 training iterations, 3 different node types (red, green ,blue)
     
     explainer = XGNNInterface(5, 15, 0, 500, 3, model = model, convertNxToData = cgd, starting_node=0) 
-    graph = explainer.train()
+    graph,prob = explainer.train()
     def printGraph( data): 
         g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
         #nx.draw_networkx(g, with_labels = True)

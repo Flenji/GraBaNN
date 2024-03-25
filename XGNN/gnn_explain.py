@@ -48,6 +48,7 @@ class gnn_explain():
     def train(self):
         ####given the well-trained model
         ### Load the model 
+        print("loading the model")
         checkpoint = torch.load(self.checkpoint)
         self.gnnNets.load_state_dict(checkpoint['net'])
         
@@ -144,7 +145,7 @@ class gnn_explain():
                 torch.nn.utils.clip_grad_norm_(self.policyNets.parameters(), 100)
                 self.optimizer.step()
         #self.graph_draw(self.graph)
-        plt.show()
+        #plt.show()
         X_new, A_new = self.read_from_graph_raw(self.graph)
         X_new = torch.from_numpy(X_new)
         A_new = torch.from_numpy(A_new) 
@@ -155,7 +156,7 @@ class gnn_explain():
         
         print(probs)
         print(prob)
-        return data
+        return data, prob
 
 
     def graph_draw(self, graph):
@@ -295,7 +296,7 @@ class gnn_explain():
             self.graph.add_node(0, label= rand_label)
        # self.graph.add_edge(1, 3)
         self.step = 0
-        #print(self.max_node)
+        #print(self.reward_stepwise)
         return 
     
                        
