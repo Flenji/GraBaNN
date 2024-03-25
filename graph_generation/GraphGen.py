@@ -31,6 +31,7 @@ class Graph:
         self.directed = directed
         self.edges = []
         self.labels = []
+        self.color_map = []
 
         ## Generate edges from a pre-defined all-containing pool (random tries can be slow)
         if not numOfNodes == 0: 
@@ -60,7 +61,7 @@ class Graph:
         featureVec = []
         for node in self.Nodes:
             featureVec.append(node.featureVector)
-        return torch.tensor(featureVec, dtype=torch.float)
+        return featureVec
 
     def getNodeLabelVec(self):
         y = []
@@ -97,7 +98,9 @@ class Graph:
 
     def networkxDraw(self, filename):
         G = nx.Graph()
-        color_map = []
+        color_map = self.color_map
+        if color_map == []:
+            color_map = ["black"]
         pos = {}
         for node in self.Nodes:
             G.add_node(node)
@@ -105,7 +108,7 @@ class Graph:
             for neighbour in node.neighbours:
                 G.add_edge(node, neighbour)
         fig = matplotlib.pyplot.figure()
-        nx.draw(G, node_size=100, edge_color='black', ax= fig.add_subplot())
+        nx.draw(G, node_color=color_map, node_size=100, edge_color='black', ax= fig.add_subplot())
     
         matplotlib.use("Agg") 
         fig.savefig(filename)
