@@ -3,7 +3,7 @@ from explainers.gnninterpreter import *
 import torch
 from tqdm.auto import trange
 
-from torch_geometric.loader import DataLoader,PrefetchLoader
+from torch_geometric.loader import DataLoader
 import graph_generation.RedRatioGraphs as RedRatioGraphs
 
 from torch import nn
@@ -11,6 +11,8 @@ from torch import nn
 from torchmetrics import F1Score
 
 import numpy as np
+
+from libraries.dataLoaderWrapper import GNNInterpreterLoaderWrapper
 
 def model_optimizer_setup(model_constr,device):
     
@@ -75,7 +77,10 @@ if __name__=='__main__':
     dataset = RedRatioGraphs.RedRatioGraphs(10000).getDataset()
     # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     device = torch.device('cpu')
-
+    print(dataset[0].x)
+    print(dataset[0].y)
+    print(dataset[0])
+    
 
 
     train_test_split = 0.8
@@ -86,16 +91,16 @@ if __name__=='__main__':
 
     print("dataset downloaded")
 
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    pre_train_loader = PrefetchLoader(train_loader, device)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
-    pre_test_loader = PrefetchLoader(test_loader, device)
+    train_loader = GNNInterpreterLoaderWrapper(train_dataset, batch_size=64, shuffle=True)
+    #pre_train_loader = PrefetchLoader(train_loader, device)
+    test_loader = GNNInterpreterLoaderWrapper(test_dataset, batch_size=64, shuffle=False)
+    #pre_test_loader = PrefetchLoader(test_loader, device)
     print("batches created")
 
     model = GCNClassifier(node_features=3,  num_classes =2, hidden_channels = 32).to(device)
 
 
-    for epoch in trange(128):
+    for epoch in trange(32):
         train_loss = fit_model(model, train_loader, lr=0.001)
         train_f1 = evaluate_model(train_loader, model)
         val_f1 = evaluate_model(test_loader, model)

@@ -65,6 +65,7 @@ class Trainer:
     def train(self, iterations):
         self.bkup_state = copy.deepcopy(self.sampler.state_dict())
         self.bkup_criterion = copy.deepcopy(self.criterion)
+        #self.bkup_criterion = self.criterion
         self.bkup_iteration = self.iteration
         self.discriminator.eval()
         self.sampler.train()

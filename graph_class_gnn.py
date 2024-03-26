@@ -16,33 +16,33 @@ import graph_generation.RedRatioGraphs as RedRatioGraphs
 class Graph_Classification_GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = GCNConv(3, 16)
-        self.conv2 = GCNConv(16, 16)
-        self.conv3 = GCNConv(16, 16)
-        self.conv4 = GCNConv(16, 16)
-        self.conv5 = GCNConv(16, 16)
-        self.lin = Linear(16, 2)
+        # self.conv1 = GCNConv(3, 16)
+        # self.conv2 = GCNConv(16, 16)
+        # self.conv3 = GCNConv(16, 16)
+        # self.conv4 = GCNConv(16, 16)
+        # self.conv5 = GCNConv(16, 16)
+        self.lin = Linear(3, 2)
 
-    def forward(self, x, edge_index, batch, edge_weight = None):
+    def forward(self, x, edge_index,  batch=None, edge_weight = None):
         
 
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv3(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv4(x, edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv5(x, edge_index)
-        x = F.relu(x)
+        # x = self.conv1(x, edge_index)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.5, training=self.training)
+        # x = self.conv2(x, edge_index)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.5, training=self.training)
+        # x = self.conv3(x, edge_index)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.5, training=self.training)
+        # x = self.conv4(x, edge_index)
+        # x = F.relu(x)
+        # x = F.dropout(x, p=0.5, training=self.training)
+        # x = self.conv5(x, edge_index)
+        # x = F.relu(x)
 
         x = global_mean_pool(x,batch)
-        x = F.dropout(x, p=0.5, training=self.training)
+        # x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin(x)
         
 
@@ -54,7 +54,7 @@ def model_optimizer_setup(model_constr,device):
     
     model = model_constr().to(device)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
     return model, optimizer
 
 
@@ -81,6 +81,7 @@ def test(loader, model):
 
 if __name__=='__main__':
     dataset = RedRatioGraphs.RedRatioGraphs(10000).getDataset()
+    # dataset = island_graphs.DatasetCreator(10000, 16,32).getDataset()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     train_test_split = 0.8
     train_idx = int(len(dataset)*0.8)
@@ -106,5 +107,5 @@ if __name__=='__main__':
         test_acc = test(pre_test_loader, model)
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
-    torch.save(model, "model/model_red_ratio.pt")
+    torch.save(model.state_dict(), "model/model_red_ratio.pt")
     torch.save(train_loader, "model/test_loader_red_ratio.pt")

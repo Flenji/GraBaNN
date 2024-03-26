@@ -1,6 +1,6 @@
-torch==2.0.0
+torch
 networkx
-torch_geometric==2.3.0
+torch_geometric
 torchmetrics
 matplotlib
 pandas
