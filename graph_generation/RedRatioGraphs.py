@@ -22,7 +22,7 @@ class RedRatioGraphs():
         res = []
         for index in range(number_graphs):
             data = self.generateGraph(self.max_nodes, self.max_edges_per_node)
-            data.y = torch.Tensor([self.labelGraph(data)])
+            data.y = torch.tensor([self.labelGraph(data)], dtype=torch.long)
             res.append(data)
         return res 
         

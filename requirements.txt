@@ -1,4 +1,7 @@
 torch
 networkx
 torch_geometric
+torchmetrics
 matplotlib
+pandas
+ipykernel
