@@ -15,8 +15,8 @@ class HouseSetCreator (GraphGen.DatasetCreator):
         for i in range(numOfGraphs):
             numOfNodes = random.randint(0, maxNodes)
             numOfEdges = random.randint(0, maxEdges)
-            print ("Max Nodes: " + str(maxNodes)+ " --> " + str(numOfNodes))
-            print ("Max Edges: " + str(maxEdges)+ " --> " + str(numOfEdges))
+            ##print ("Max Nodes: " + str(maxNodes)+ " --> " + str(numOfNodes))
+            ##print ("Max Edges: " + str(maxEdges)+ " --> " + str(numOfEdges))
             graph = GraphGen.Graph(numOfNodes, numOfEdges, False)
 
             ## Appr. 25% positive cases (+ random generated ones)
@@ -33,23 +33,23 @@ class HouseSetCreator (GraphGen.DatasetCreator):
             else:
                 graph.labels = [0]
             
-            print ("Edges: " + str(graph.edges))
+            ##print ("Edges: " + str(graph.edges))
 
-            print ("Node feature vectors: " + (str(graph.getNodeFeatureVec())))
+            ##print ("Node feature vectors: " + (str(graph.getNodeFeatureVec())))
             
             self.paintHouse(graph)
 
-            print ("Graph labels: " + str(graph.labels))
-            print("")
+            ##print ("Graph labels: " + str(graph.labels))
+            ##print("")
             
-            graph.networkxDraw( "./graphs/house/graph-" + str(uuid.uuid4()) +".jpg" )
+            ##graph.networkxDraw( "./graphs/house/graph-" + str(uuid.uuid4()) +".jpg" )
             
             ## Add graph to list
             self.graphList.append(graph)
 
     def hasHouse(self, graph):
         for m in (graph.Nodes):
-            m.featureVector = [0]
+            m.featureVector = [0,0,1]
 
         for n in (graph.Nodes):
             for i in (n.neighbours):
@@ -59,7 +59,7 @@ class HouseSetCreator (GraphGen.DatasetCreator):
                             if v == n:
                                 flag = len(set([i,ii,iii,v])) == len([i,ii,iii,v])
                                 if flag:
-                                    print ("House-base generated: " + str([i,ii,iii,v]))
+                                    ##print ("House-base generated: " + str([i,ii,iii,v]))
                                     if self.hasHouseRoof([i,ii,iii,v]):
                                         return True
         return False
@@ -70,13 +70,13 @@ class HouseSetCreator (GraphGen.DatasetCreator):
                 if not (i in hb):
                     for ii in (i.neighbours):
                         if not (ii == n) and (ii in hb):
-                            print ("Roof found: " + str([n,i,ii]))
+                            ##print ("Roof found: " + str([n,i,ii]))
                             for walls in hb:
-                                walls.featureVector = [1]
+                                walls.featureVector = [0,1,0]
                             for roof in [n,i,ii]:
-                                roof.featureVector = [2]
+                                roof.featureVector = [1,0,0]
                             return True
-        print ("But valid roof not found!")
+        ##print ("But valid roof not found!")
         return False
     
     def buildHouse(self,graph):
@@ -146,11 +146,11 @@ class HouseSetCreator (GraphGen.DatasetCreator):
     def paintHouse(self, graph):
         cm = []
         for n in graph.getNodeFeatureVec():
-            if n == [0]:
+            if n == [0,0,1]:
                 cm.append("black")
-            elif n == [1]:
+            elif n == [0,1,0]:
                 cm.append("yellow")
-            elif n == [2]:
+            elif n == [1,0,0]:
                 cm.append("red")
             elif n == []:
                 cm.append("blue")

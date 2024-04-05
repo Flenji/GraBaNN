@@ -4,10 +4,11 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GraphConv
 
 from torch_geometric.data import Batch
 from torch_geometric.nn import global_mean_pool
-import synthetic_graph_gen
+import HouseSet
 
 from torch_geometric.loader import DataLoader,PrefetchLoader
 
@@ -16,13 +17,10 @@ from torch_geometric.loader import DataLoader,PrefetchLoader
 class GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = GCNConv(6, 16)
+        self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 32)
         self.conv3 = GCNConv(32, 32)
-        self.conv4 = GCNConv(32, 32)
-        self.conv5 = GCNConv(32, 32)
-        self.conv6 = GCNConv(32, 16)
-        self.conv7 = GCNConv(16, 6)
+        self.conv4 = GCNConv(32, 2)
 
     def forward(self, x, edge_index):
 
@@ -32,38 +30,12 @@ class GCN(torch.nn.Module):
         x = F.relu(x)
         x = self.conv3(x,edge_index)
         x = F.relu(x)
-        x = self.conv4(x,edge_index)
-        x = F.relu(x)
-        x = self.conv5(x,edge_index)
-        x = F.relu(x)
-        x = self.conv6(x,edge_index)
-        x = F.relu(x)
         x = F.dropout(x, training=self.training)
-        x = self.conv7(x, edge_index)
+        x = self.conv4(x, edge_index)
         
 
         return F.log_softmax(x, dim=1)
     
-class GCN2(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = GCNConv(6, 16)
-        self.conv3 = GCNConv(16, 16)
-        self.conv2 = GCNConv(16, 6)
-
-    def forward(self, x, edge_index):
-
-        x = self.conv1(x, edge_index)
-        x = F.relu(x)
-        x = self.conv3(x,edge_index)
-        x = F.relu(x)
-        x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index)
-        
-
-        return F.log_softmax(x, dim=1)
-    
-
 
 def model_optimizer_setup(model_constr,device):
     
@@ -107,8 +79,7 @@ def collate(dataList):
     return Batch.from_data_list(dataList)
 
 if __name__=='__main__':
-    datasetCreator = synthetic_graph_gen.DatasetCreator(10000, 16, 32)
-    dataset = datasetCreator.getDataset(1)
+    dataset = HouseSet.HouseSetCreator(1000,16,32).getDataset()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     train_test_split = 0.8
     train_idx = int(len(dataset)*0.8)

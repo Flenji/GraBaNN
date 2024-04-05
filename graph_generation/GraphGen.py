@@ -35,7 +35,7 @@ class Graph:
 
         ## Generate edges from a pre-defined all-containing pool (random tries can be slow)
         if not numOfNodes == 0: 
-            print ("Generating " + str(self.numOfNodes) + " Nodes with " + str(self.numOfEdges) + " Edges.")
+            ##print ("Generating " + str(self.numOfNodes) + " Nodes with " + str(self.numOfEdges) + " Edges.")
             pool = []
             for x in range(self.numOfNodes):
                 for y in range(self.numOfNodes):
@@ -54,7 +54,7 @@ class Graph:
                 pool.remove(nEdge)
 
                 if len(pool) == 0:
-                    print("Edge generation pool is empty. Expecting fully connected graph.")
+                    ##print("Edge generation pool is empty. Expecting fully connected graph.")
                     break
     
     def getNodeFeatureVec(self):
@@ -93,7 +93,8 @@ class Graph:
             print("Use string \"node\" or \"graph\" for the level of classification. Using node level for now.")
             y = self.getNodeLabelVec
 
-        return data.Data(x=self.getNodeFeatureVec(), edge_index=edge_index, y=torch.tensor(y))
+        print ("Y is: " + str(y))
+        return data.Data(x=torch.tensor(self.getNodeFeatureVec(), dtype=torch.float), edge_index=edge_index, y=torch.tensor(y))
 
 
     def networkxDraw(self, filename):
