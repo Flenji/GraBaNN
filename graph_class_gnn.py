@@ -16,22 +16,22 @@ import graph_generation.RedRatioGraphs as RedRatioGraphs
 class Graph_Classification_GCN(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        # self.conv1 = GCNConv(3, 16)
-        # self.conv2 = GCNConv(16, 16)
+        self.conv1 = GCNConv(3, 16)
+        self.conv2 = GCNConv(16, 16)
         # self.conv3 = GCNConv(16, 16)
         # self.conv4 = GCNConv(16, 16)
         # self.conv5 = GCNConv(16, 16)
-        self.lin = Linear(3, 2)
+        self.lin = Linear(16, 2)
 
     def forward(self, x, edge_index,  batch=None, edge_weight = None):
         
 
-        # x = self.conv1(x, edge_index)
-        # x = F.relu(x)
-        # x = F.dropout(x, p=0.5, training=self.training)
-        # x = self.conv2(x, edge_index)
-        # x = F.relu(x)
-        # x = F.dropout(x, p=0.5, training=self.training)
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.conv2(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, p=0.5, training=self.training)
         # x = self.conv3(x, edge_index)
         # x = F.relu(x)
         # x = F.dropout(x, p=0.5, training=self.training)
@@ -107,5 +107,5 @@ if __name__=='__main__':
         test_acc = test(pre_test_loader, model)
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
-    torch.save(model.state_dict(), "model/model_red_ratio.pt")
-    torch.save(train_loader, "model/test_loader_red_ratio.pt")
+    torch.save(model.state_dict(), "model/pgexp_model_red_ratio.pt")
+    torch.save(train_loader, "model/pgexp_test_loader_red_ratio.pt")
