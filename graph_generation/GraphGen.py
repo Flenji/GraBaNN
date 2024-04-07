@@ -93,7 +93,7 @@ class Graph:
             print("Use string \"node\" or \"graph\" for the level of classification. Using node level for now.")
             y = self.getNodeLabelVec
 
-        print ("Y is: " + str(y))
+        ##print ("Y is: " + str(y))
         return data.Data(x=torch.tensor(self.getNodeFeatureVec(), dtype=torch.float), edge_index=edge_index, y=torch.tensor(y))
 
 

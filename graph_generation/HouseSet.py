@@ -13,8 +13,8 @@ class HouseSetCreator (GraphGen.DatasetCreator):
 
         ## Generate graphs for datalist
         for i in range(numOfGraphs):
-            numOfNodes = random.randint(0, maxNodes)
-            numOfEdges = random.randint(0, maxEdges)
+            numOfNodes = random.randint(3, maxNodes)
+            numOfEdges = random.randint(3, maxEdges)
             ##print ("Max Nodes: " + str(maxNodes)+ " --> " + str(numOfNodes))
             ##print ("Max Edges: " + str(maxEdges)+ " --> " + str(numOfEdges))
             graph = GraphGen.Graph(numOfNodes, numOfEdges, False)
@@ -49,7 +49,13 @@ class HouseSetCreator (GraphGen.DatasetCreator):
 
     def hasHouse(self, graph):
         for m in (graph.Nodes):
-            m.featureVector = [0,0,1]
+            r = random.randint(0, 2)
+            if (r == 0):
+                m.featureVector = [0,0,1]
+            elif (r == 1):
+                m.featureVector = [0,1,0]
+            elif (r == 2):
+                m.featureVector = [1,0,0]
 
         for n in (graph.Nodes):
             for i in (n.neighbours):
