@@ -82,7 +82,8 @@ def test(loader, model):
 if __name__=='__main__':
     dataset = RedRatioGraphs.RedRatioGraphs(10000).getDataset()
     # dataset = island_graphs.DatasetCreator(10000, 16,32).getDataset()
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cpu')
     train_test_split = 0.8
     train_idx = int(len(dataset)*0.8)
     print(train_idx)
