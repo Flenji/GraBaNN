@@ -9,7 +9,7 @@ import networkx as nx
 import random
 import torch
 import torch_geometric
-
+from numpy.random import choice
 
 class GridGraphs():
     
@@ -22,8 +22,10 @@ class GridGraphs():
     def getDataset(self):
         return self.data_list
     
-    def getPositiveClass(self):
-        rand_graph = nx.barabasi_albert_graph(31,2)
+    def getPositiveClass(self,total_num_nodes):
+        
+        rand_nodes = total_num_nodes -9
+        rand_graph = nx.barabasi_albert_graph(rand_nodes,2)
         
         node_attr = {}
         number = len(rand_graph)
@@ -51,13 +53,18 @@ class GridGraphs():
         combined_graph.add_edge(attachment_node,number)
         return combined_graph
     
-    def getNegativeClass(self):
-        rand_graph = nx.barabasi_albert_graph(40,2)
+    def getNegativeClass(self, total_num_nodes):
+        
+        rand_nodes = total_num_nodes-9
+        p = [(rand_nodes/3+5)/total_num_nodes, (rand_nodes/3+4)/total_num_nodes,\
+             (rand_nodes/3)/total_num_nodes]
+        
+        rand_graph = nx.barabasi_albert_graph(total_num_nodes,2)
         
         node_attr = {}
         number = len(rand_graph)
         for node  in rand_graph.nodes:
-            node_attr[node] = {"label": random.randint(0,2)}
+            node_attr[node] = {"label": choice([0,1,2],1,p=p)[0]}
         
         
         nx.set_node_attributes(rand_graph, node_attr)
@@ -104,11 +111,12 @@ class GridGraphs():
         dataset = []
         for i in range(number_of_graphs):
             if i%2 == 0:
-                graph = self.getPositiveClass()
+                num_nodes = random.randint(30, 40)
+                graph = self.getPositiveClass(num_nodes)
                 data = self.convertNxToData(graph, enc_dict)
                 data.y = torch.Tensor([1])
             else:
-                graph = self.getNegativeClass()
+                graph = self.getNegativeClass(num_nodes)
                 data = self.convertNxToData(graph, enc_dict)
                 data.y = torch.Tensor([0])
             dataset.append(data)
@@ -124,4 +132,5 @@ class GridGraphs():
         # Plot the graph with node colors based on the feature vector
         nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
         
+
     
