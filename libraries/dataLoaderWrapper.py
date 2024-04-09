@@ -45,6 +45,7 @@ class GNNInterpreterLoaderWrapper(DataLoader):
     
     @default_ax
     def draw(self, G, pos=None, ax=None):
+        
         nx.draw(G, pos=pos or nx.kamada_kawai_layout(G), ax=ax)
 
     def show(self, idx, ax=None, **kwargs):
