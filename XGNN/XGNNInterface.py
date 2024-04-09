@@ -92,7 +92,7 @@ if __name__ == '__main__':
     model  = cN.GCN(3,2,25) #model structure
     #graph with 5 nodes, max 10 edges, class 1, 50 training iterations, 3 different node types (red, green ,blue)
     
-    explainer = XGNNInterface(5, 15, 0, 500, 3, model = model, convertNxToData = cgd, starting_node=0) 
+    explainer = XGNNInterface(5, 15, 0, 50, 3, model = model, convertNxToData = cgd, starting_node=1) 
     graph,prob = explainer.train()
     def printGraph( data): 
         g = torch_geometric.utils.to_networkx(data, to_undirected=True, )

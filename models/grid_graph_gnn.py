@@ -83,7 +83,7 @@ if __name__ == '__main__':
     sys.path.insert(0, os.path.join(parentdir,"graph_generation"))
     #from RedRatioGraphs import RedRatioGraphs
     from GridGraphs import GridGraphs
-    gridGraphs = GridGraphs(1000)
+    gridGraphs = GridGraphs(10000)
     dataset = gridGraphs.getDataset()
     
     feature_size = len(dataset[0].x[0])
