@@ -1,3 +1,8 @@
+import sys
+import os
+# sys.path.append(os.path.abspath(''))
+# setting path
+sys.path.append(os.path.abspath('explainers'))
 import random
 import torch
 from torch_geometric.loader import DataLoader
@@ -9,7 +14,7 @@ import numpy as np
 from torch import nn
 from tqdm.auto import tqdm
 
-from explainers.gnninterpreter.datasets.utils import default_ax
+from gnninterpreter.datasets.utils import default_ax
 
 class GNNInterpreterLoaderWrapper(DataLoader):
     GRAPH_CLS = {}
