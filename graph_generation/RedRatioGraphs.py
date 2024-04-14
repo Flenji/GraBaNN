@@ -2,6 +2,8 @@ import torch
 from torch_geometric.data import Data
 import numpy as np
 import itertools
+import networkx as nx
+import torch_geometric
 
 
 
@@ -20,7 +22,7 @@ class RedRatioGraphs():
         res = []
         for index in range(number_graphs):
             data = self.generateGraph(self.max_nodes, self.max_edges_per_node)
-            data.y = torch.Tensor([self.labelGraph(data)])
+            data.y = torch.tensor([self.labelGraph(data)], dtype=torch.long)
             res.append(data)
         return res 
         
@@ -66,3 +68,12 @@ class RedRatioGraphs():
             return 1
         else:
             return 0
+    
+    def printGraph(data): 
+        g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
+        #nx.draw_networkx(g, with_labels = True)
+    
+        feature_vector = data.x.numpy()
+    
+        # Plot the graph with node colors based on the feature vector
+        nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
