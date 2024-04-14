@@ -49,8 +49,9 @@ class gnn_explain():
         ####given the well-trained model
         ### Load the model 
         print("loading the model")
-        checkpoint = torch.load(self.checkpoint)
-        self.gnnNets.load_state_dict(checkpoint['net'])
+        if self.checkpoint != False:
+            checkpoint = torch.load(self.checkpoint)
+            self.gnnNets.load_state_dict(checkpoint['net'])
         
         for i in range(self.max_iters):
             self.graph_reset() # graph is reset to the empty state
