@@ -1,8 +1,7 @@
 import sys
 import os
-# sys.path.append(os.path.abspath(''))
-# setting path
-sys.path.append(os.path.abspath('explainers'))
+
+sys.path.append(os.path.abspath(''))
 import random
 import torch
 from torch_geometric.loader import DataLoader
@@ -14,7 +13,8 @@ import numpy as np
 from torch import nn
 from tqdm.auto import tqdm
 
-from gnninterpreter.datasets.utils import default_ax
+import utility_functions as utility_functions
+
 
 class GNNInterpreterLoaderWrapper(DataLoader):
     GRAPH_CLS = {}
@@ -47,17 +47,17 @@ class GNNInterpreterLoaderWrapper(DataLoader):
             self.initialize()
         return super().__getattribute__(name)
     
-    
-    @default_ax
     def draw(self, G, pos=None, ax=None):
-        
-        nx.draw(G, pos=pos or nx.kamada_kawai_layout(G), ax=ax)
+        labels = [G.nodes[node]['label'] for node in G.nodes]
+        nx.draw(G, pos=pos or nx.kamada_kawai_layout(G), ax=ax, node_color=labels)
 
     def show(self, idx, ax=None, **kwargs):
         data = self[idx]
         print(f"data: {data}")
         print(f"class: {self.GRAPH_CLS[data.G.graph['label']]}")
-        self.draw(data.G, ax=ax, **kwargs)
+        nx.draw_networkx(data.G, with_labels=True, node_color= [[] for _ in data.G.nodes['label']])
+        
+        #self.draw(data.G, ax=ax, **kwargs)
 
     def describe(self):
         n = [data.G.number_of_nodes() for data in self]

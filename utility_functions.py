@@ -51,3 +51,8 @@ def printGraph( data):
 
     # Plot the graph with node colors based on the feature vector
     nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
+
+def printGraphFromNX(data, nxData):
+ 
+    feature_vector = data.x.numpy()
+    nx.draw_networkx(nxData, with_labels=True, node_color=feature_vector)
