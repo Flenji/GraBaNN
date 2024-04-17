@@ -26,7 +26,7 @@ from utility_functions import *
 dummy_gg = gg.MultiGraphs(20)
 encoding_dict = one_hot_encoding(3) #encoding for red, green, blue
 cgd = lambda nx_graph: convertNxToData(nx_graph, encoding_dict) #convering function
-model  = cN.GCN(3,2,25) #model structure
+model  = cN.GCN(3,3,25) #model structure
 
 dataset = dummy_gg.getDataset()
 #test = dataset[0]
@@ -34,10 +34,10 @@ dataset = dummy_gg.getDataset()
 #print(model(test.x, test.edge_index))
 #graph with 5 nodes, max 10 edges, class 1, 50 training iterations, 3 different node types (red, green ,blue)
 
-explainer = XGNNInterface(9, 20, 1, 50,3,learning_rate=0.1, model = model,\
-                          convertNxToData = cgd, starting_node=2,\
+explainer = XGNNInterface(9, 20, 1, 300,3,learning_rate=0.1, model = model,\
+                          convertNxToData = cgd, starting_node=1,\
                               checkpoint = "./checkpoint/multi.pth",roll_out_alpha = 2,
-                              reward_stepwise = 0.3) 
+                              reward_stepwise = 0.35) 
 
 graph, prob = explainer.train()#
 

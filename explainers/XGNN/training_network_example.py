@@ -84,7 +84,7 @@ if __name__ == '__main__':
     
     feature_size = len(dataset[0].x[0])
     
-    num_classes = 2
+    num_classes = 3
     
     model = GCN(feature_size, num_classes, hidden_channels=25)
     criterion = nn.CrossEntropyLoss()

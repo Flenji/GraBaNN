@@ -22,13 +22,28 @@ from numpy.random import choice
 
 class MultiGraphs():
     
-    def __init__(self,number_graphs):
+    """
+    This class creates random barabasi-albert graphs to which a grit with a 
+    specific node coloring is attached (3 different classes).
+    If the parameter negative_class is set to true, it will create graphes that
+    are divided in 4 classes, where 3 of the classes contain are the grid-graphs 
+    and 1 contains barabasi albert graphs without grit attached.
+    
+    """
+    
+    def __init__(self,number_graphs, negative_class = False):
         #self.max_nodes = max_nodes
         #self.max_edges_per_node = max_edges_per_node
         
+        
+        self.red = [0 if index%2 == 0 else 1 for index in range(9)] 
+        self.green = [1 if index%2 == 0 else 2 for index in range(9)]
+        self.blue = [2 if index%2 == 0 else 0 for index in range(9)] 
+        
+        self.negative_class = negative_class
+        
         self.data_list = self.generateGraphs(number_graphs)
-        self.nx_graph = None
-        pass
+        
         
     
     def createGridShape(self):
@@ -43,6 +58,24 @@ class MultiGraphs():
         #mapping = {node: i+number for i, node in enumerate(grid_graph.nodes())}
         #grid_graph = nx.relabel_nodes(grid_graph, mapping)
         return grid_graph, (5,4,0)
+    
+    def createGridShapeColor(self,colors):
+        grid_graph = nx.grid_graph((3,3))
+        
+        
+        node_attr = {}
+        for index,node in enumerate(grid_graph.nodes):
+            node_attr[node] = {"label":colors[index]}#{"label":index%2}
+        
+        #print(node_attr)
+        nx.set_node_attributes(grid_graph, node_attr)
+        
+        count = lambda li, val: sum([1 for x in li if x == val])
+        #mapping = {node: i+number for i, node in enumerate(grid_graph.nodes())}
+        #grid_graph = nx.relabel_nodes(grid_graph, mapping)
+        color_dist = (count(colors,0),count(colors,1),count(colors,2))
+        return grid_graph, color_dist
+        
         
     def createStarShape(self):
         
@@ -97,6 +130,19 @@ class MultiGraphs():
         
         return combined_graph
     
+    def getNegativeClass(self,total_num_nodes):
+        
+        rand_graph = nx.barabasi_albert_graph(total_num_nodes,2)
+        node_attr = {}
+        number = len(rand_graph)
+        for node  in rand_graph.nodes:
+            node_attr[node] = {"label": random.randint(0,2)}
+        
+        
+        nx.set_node_attributes(rand_graph, node_attr)
+        
+        return rand_graph
+    
     
     def one_hot_encoding(self,number_node_types):
         """
@@ -138,23 +184,36 @@ class MultiGraphs():
         enc_dict = self.one_hot_encoding(3)
         dataset = []
         
-        star_graph, star_color = self.createStarShape()
-        grid_graph, grid_color = self.createGridShape()
+        #star_graph, star_color = self.createStarShape()
+        grid_graph_red, grid_color_red = self.createGridShapeColor(self.red)
+        grid_graph_green, grid_color_green = self.createGridShapeColor(self.green)
+        grid_graph_blue, grid_color_blue = self.createGridShapeColor(self.blue)
+        
+        if self.negative_class:
+            mod = 4
+        else:
+            mod = 3
+        
         
         for i in range(number_of_graphs):
-            if i%2 == 0:
-                num_nodes = random.randint(30, 40)
-                graph = self.getClass(num_nodes,grid_graph, grid_color)
-                data = self.convertNxToData(graph, enc_dict)
-                
-                data.y = torch.Tensor([1])
-            else:
-                graph = self.getClass(num_nodes, star_graph, star_color)
-
-                
-                self.nx_graph = graph
+            if i%mod == 0:
+                num_nodes = random.randint(40, 50)
+                graph = self.getClass(num_nodes,grid_graph_red, grid_color_red)
                 data = self.convertNxToData(graph, enc_dict)
                 data.y = torch.Tensor([0])
+            elif i%mod == 1:
+                graph = self.getClass(num_nodes, grid_graph_green, grid_color_green)
+                data = self.convertNxToData(graph, enc_dict)
+                data.y = torch.Tensor([1])
+            elif i%mod == 2:
+                graph = self.getClass(num_nodes, grid_graph_blue, grid_color_blue)
+                data = self.convertNxToData(graph, enc_dict)
+                data.y = torch.Tensor([2])
+            elif i%mod ==3:
+                graph = self.getNegativeClass(num_nodes)
+                data = self.convertNxToData(graph, enc_dict)
+                data.y = torch.Tensor([3])
+            
             dataset.append(data)
         return dataset
     
@@ -168,8 +227,8 @@ class MultiGraphs():
         # Plot the graph with node colors based on the feature vector
         nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
         
+#x = MultiGraphs(15, negative_class=True)
 
 
-
-
+#dataset = x.getDataset()
  
