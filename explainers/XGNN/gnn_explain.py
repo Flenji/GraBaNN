@@ -155,8 +155,8 @@ class gnn_explain():
         logits, probs = self.gnnNets(data.x,data.edge_index)#****self.gnnNets(X_new.float(), A_new.float())
         prob = probs.squeeze()[self.target_class].item()
         
-        print(probs)
-        print(prob)
+        #print(probs)
+        #print(prob)
         return data, prob
 
 

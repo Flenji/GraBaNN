@@ -143,6 +143,7 @@ class PolicyNN(nn.Module):
 
         
         tail_prob_dist = torch.distributions.Categorical(tail_probs)
+        #print(tail_prob_dist.probs)
         try:
             tail_action = tail_prob_dist.sample()
 #            if tail_action >= start_action:
