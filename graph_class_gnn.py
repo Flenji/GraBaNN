@@ -14,14 +14,14 @@ import graph_generation.RedRatioGraphs as RedRatioGraphs
 
 
 class Graph_Classification_GCN(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, input_nodes=3, output_nodes=2):
         super().__init__()
-        self.conv1 = GCNConv(3, 16)
+        self.conv1 = GCNConv(input_nodes, 16)
         self.conv2 = GCNConv(16, 16)
         self.conv3 = GCNConv(16, 16)
         # self.conv4 = GCNConv(16, 16)
         # self.conv5 = GCNConv(16, 16)
-        self.lin = Linear(16, 2)
+        self.lin = Linear(16, output_nodes)
 
     def forward(self, x, edge_index,  batch=None, edge_weight = None):
         
@@ -50,9 +50,9 @@ class Graph_Classification_GCN(torch.nn.Module):
     
 
 
-def model_optimizer_setup(model_constr,device):
+def model_optimizer_setup(model_constr,device, input_nodes=3, output_nodes=2):
     
-    model = model_constr().to(device)
+    model = model_constr(input_nodes,output_nodes).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0005, weight_decay=5e-4)
     return model, optimizer
