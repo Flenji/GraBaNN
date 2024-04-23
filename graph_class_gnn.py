@@ -8,7 +8,7 @@ from torch_geometric.nn import global_mean_pool
 
 
 from torch_geometric.datasets import QM9,TUDataset
-from torch_geometric.loader import DataLoader,PrefetchLoader
+from torch_geometric.loader import DataLoader
 import graph_generation.island_graphs as island_graphs
 import graph_generation.RedRatioGraphs as RedRatioGraphs
 
@@ -18,7 +18,7 @@ class Graph_Classification_GCN(torch.nn.Module):
         super().__init__()
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 16)
-        # self.conv3 = GCNConv(16, 16)
+        self.conv3 = GCNConv(16, 16)
         # self.conv4 = GCNConv(16, 16)
         # self.conv5 = GCNConv(16, 16)
         self.lin = Linear(16, 2)
@@ -32,9 +32,9 @@ class Graph_Classification_GCN(torch.nn.Module):
         x = self.conv2(x, edge_index)
         x = F.relu(x)
         x = F.dropout(x, p=0.5, training=self.training)
-        # x = self.conv3(x, edge_index)
-        # x = F.relu(x)
-        # x = F.dropout(x, p=0.5, training=self.training)
+        x = self.conv3(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, p=0.5, training=self.training)
         # x = self.conv4(x, edge_index)
         # x = F.relu(x)
         # x = F.dropout(x, p=0.5, training=self.training)
@@ -54,7 +54,7 @@ def model_optimizer_setup(model_constr,device):
     
     model = model_constr().to(device)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.0005, weight_decay=5e-4)
     return model, optimizer
 
 
@@ -76,7 +76,7 @@ def test(loader, model):
          out = model(data.x, data.edge_index, data.batch)  
          pred = out.argmax(dim=1)  # Use the class with highest probability.
          correct += int((pred == data.y).sum())  # Check against ground-truth labels.
-     return correct / len(loader.loader.dataset)  # Derive ratio of correct predictions.
+     return correct / len(loader.dataset)  # Derive ratio of correct predictions.
 
 
 if __name__=='__main__':
@@ -93,19 +93,19 @@ if __name__=='__main__':
     print("dataset downloaded")
 
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    pre_train_loader = PrefetchLoader(train_loader, device)
+    # pre_train_loader = PrefetchLoader(train_loader, device)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
-    pre_test_loader = PrefetchLoader(test_loader, device)
+    # pre_test_loader = PrefetchLoader(test_loader, device)
     print("batches created")
 
 
 
     print("done")
     model, optimizer = model_optimizer_setup(Graph_Classification_GCN, device)
-    for epoch in range(1, 10):
-        train(model, optimizer, pre_train_loader)
-        train_acc = test(pre_train_loader, model)
-        test_acc = test(pre_test_loader, model)
+    for epoch in range(1, 30):
+        train(model, optimizer, train_loader)
+        train_acc = test(train_loader, model)
+        test_acc = test(test_loader, model)
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
     torch.save(model.state_dict(), "model/pgexp_model_red_ratio.pt")

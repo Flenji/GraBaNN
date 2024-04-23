@@ -1,0 +1,7 @@
+Balint: 
+- House Dataset
+
+Hannes: 
+- MultiGraph without empty with empty
+- Red Ratio
+- 
