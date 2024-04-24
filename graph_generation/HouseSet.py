@@ -1,5 +1,5 @@
 
-import GraphGen
+import graph_generation.GraphGen as GraphGen
 
 from typing import List,Dict
 import random

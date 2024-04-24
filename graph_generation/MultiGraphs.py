@@ -171,7 +171,7 @@ class MultiGraphs():
             x.append(value)
         
         if len(list(nx_graph.edges()))!= 0:
-            edge_index = torch.tensor(list(nx_graph.edges())).t().contiguous()
+            edge_index = torch.tensor(list(nx_graph.edges()),dtype=torch.long).t().contiguous()
         else:
             edge_index = torch.tensor([[],[]], dtype=torch.long)
             
@@ -200,19 +200,19 @@ class MultiGraphs():
                 num_nodes = random.randint(40, 50)
                 graph = self.getClass(num_nodes,grid_graph_red, grid_color_red)
                 data = self.convertNxToData(graph, enc_dict)
-                data.y = torch.Tensor([0])
+                data.y = torch.tensor([0],dtype=torch.long)
             elif i%mod == 1:
                 graph = self.getClass(num_nodes, grid_graph_green, grid_color_green)
                 data = self.convertNxToData(graph, enc_dict)
-                data.y = torch.Tensor([1])
+                data.y = torch.tensor([1],dtype=torch.long)
             elif i%mod == 2:
                 graph = self.getClass(num_nodes, grid_graph_blue, grid_color_blue)
                 data = self.convertNxToData(graph, enc_dict)
-                data.y = torch.Tensor([2])
+                data.y = torch.tensor([2],dtype=torch.long)
             elif i%mod ==3:
                 graph = self.getNegativeClass(num_nodes)
                 data = self.convertNxToData(graph, enc_dict)
-                data.y = torch.Tensor([3])
+                data.y = torch.tensor([3],dtype=torch.long)
             
             dataset.append(data)
         return dataset
