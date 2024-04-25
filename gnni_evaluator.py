@@ -104,8 +104,8 @@ def train_and_save(dataset, device, name):
     torch.save(train_loader, 'outputs/models/gnni_test_loader_'+str(name)+ '.pt')
 
 def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name", temp =0.15):
-    dataset = torch.load(dataset_file)
-
+    datasetLoader = torch.load(dataset_file)
+    dataset = datasetLoader.dataset
     y = [data.y for data in dataset]
     classes = np.unique(y)
     node_classes = len(dataset[0].x[0])
@@ -115,7 +115,7 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
 
     model.load_state_dict(torch.load(model_file))
     print(f'{dataset_name} model loaded')
-    mean_embeds = dataset.mean_embeddings(model)
+    mean_embeds = datasetLoader.mean_embeddings(model)
     print(f'{dataset_name} mean embeddings calculated')
     trainer = {}
     sampler ={}
@@ -143,14 +143,14 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
             ]),
             optimizer=(o := torch.optim.SGD(s.parameters(), lr=1)),
             scheduler=torch.optim.lr_scheduler.ExponentialLR(o, gamma=1),
-            dataset=dataset,
+            dataset=datasetLoader,
             budget_penalty=BudgetPenalty(budget=10, order=2, beta=1),
             target_probs={c: (0.9, 1)},
             k_samples=16
         )
         if trainer[c].train(len(dataset)):
             fig, ax = plt.subplots()
-            dataset.set_subplot(ax)
+            datasetLoader.set_subplot(ax)
             for threshold in [0.25, 0.5, 0.57]:
                 graph, show_res = trainer[c].evaluate(threshold=threshold, show=True)
                 torch.save(graph, f'outputs/gnni/{dataset_name}_temp_{temp}_threshold_{threshold}_class_{c}.pt')
