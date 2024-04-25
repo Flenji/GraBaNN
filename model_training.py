@@ -33,7 +33,7 @@ def doall(dataset, name):
 
     print("done")
     model, optimizer = graph_class_gnn.model_optimizer_setup(graph_class_gnn.Graph_Classification_GCN, device, input_nodes=len(dataset[0].x[0]), output_nodes=len(classes))
-    for epoch in range(1, 30):
+    for epoch in range(1, 200):
         graph_class_gnn.train(model, optimizer, train_loader)
         train_acc = graph_class_gnn.test(train_loader, model)
         test_acc = graph_class_gnn.test(test_loader, model)
@@ -48,23 +48,23 @@ if __name__ == '__main__':
 
 
 
-    datasets.append({"dataset": RedRatioGraphs.RedRatioGraphs(10000).getDataset(), "name": "RedRatioGraphs"})
-    print('RedRatioGraphs done')
-    datasets.append({"dataset":MultiGraphs(10000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
+    # datasets.append({"dataset": RedRatioGraphs(4000).getDataset(), "name": "RedRatioGraphs"})
+    # print('RedRatioGraphs done')
+    datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
     print('MultiGraphs done')
-    datasets.append({"dataset":MultiGraphs(10000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
+    datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
     print('MultiGraphs done')
-    datasets.append({"dataset":HouseSet.HouseSetCreator(1000, 40,60).getDataset(), "name": "HouseSet"})
+    datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
     print('HouseSet done')
     
 
    
-    for dataset in datasets:
-        doall(dataset["dataset"], dataset["name"])
-        print(f'{dataset["name"]} done')
+    # for dataset in datasets:
+    #     doall(dataset["dataset"], dataset["name"])
+    #     print(f'{dataset["name"]} done')
 
     for dataset in datasets: 
-        for epoch in [10,25,100]:
+        for epoch in [10,25]:
             for lr in [0.001, 0.003, 0.005]:
                 generate_results('outputs/models/pgexp_model_'+str(dataset["name"])+'.pt', 'outputs/models/pgexp_test_loader_'+str(dataset["name"])+'.pt', epoch=epoch, lr=lr, dataset_name=dataset["name"])
                 print(f'{dataset["name"]} epoch {epoch} lr {lr} done')

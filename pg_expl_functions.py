@@ -8,8 +8,12 @@ import matplotlib.pyplot as plt
 import utility_functions as uf
 
 def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_per_class = 5, dataset_name= "no_name"):
+    datasetLoader = torch.load(dataset_file)
     
-    model = Graph_Classification_GCN()
+    dataset = datasetLoader.dataset
+    y = [data.y for data in dataset]
+    classes = np.unique(y)
+    model = Graph_Classification_GCN(input_nodes=len(dataset[0].x[0]), output_nodes=len(classes))
     model.load_state_dict(torch.load(model_file))
     explainer = ex.Explainer(
         model=model,
@@ -18,8 +22,6 @@ def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_p
         edge_mask_type='object',
         model_config=ex.ModelConfig(mode="multiclass_classification", task_level="graph", return_type="raw"),
     )
-    datasetLoader = torch.load(dataset_file)
-    dataset = datasetLoader.dataset
     
     for epoch in range(epoch):
         #print epochs
