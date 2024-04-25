@@ -174,12 +174,12 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
 if __name__=='__main__':
     datasets = []
 
-    # datasets.append({"dataset": RedRatioGraphs.RedRatioGraphs(10000).getDataset(), "name": "RedRatioGraphs"})
-    # print('RedRatioGraphs done')
-    # datasets.append({"dataset":MultiGraphs(10000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
-    # print('MultiGraphsTrue done')
-    # datasets.append({"dataset":MultiGraphs(10000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
-    # print('MultiGraphsFalse done')
+    datasets.append({"dataset": RedRatioGraphs.RedRatioGraphs(10000).getDataset(), "name": "RedRatioGraphs"})
+    print('RedRatioGraphs done')
+    datasets.append({"dataset":MultiGraphs(10000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
+    print('MultiGraphsTrue done')
+    datasets.append({"dataset":MultiGraphs(10000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
+    print('MultiGraphsFalse done')
     datasets.append({"dataset":HouseSet.HouseSetCreator(1000, 40,60).getDataset(), "name": "HouseSet"})
     print('HouseSet done')
     
