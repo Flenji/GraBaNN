@@ -25,9 +25,11 @@ class GNNInterpreterLoaderWrapper(DataLoader):
     def initialize(self):
         self.init_done = True
         max_class = max(obj.y for obj in self.dataset)
-        max_node = len(self.dataset[0].x)
+        max_node = len(self.dataset[0].x[0])
         self.GRAPH_CLS = {i : str(i) for i in range(max_class +1)}
-        self.NODE_CLS = {i : str(i) for i in range(max_node +1)}
+        identity_matrix = np.eye(max_node)  # Create an n x n identity matrix
+        self.NODE_CLS = {i: list(identity_matrix[i]) for i in range(max_node)}
+
 
     def __setitem__(self, key, value):
         self.dataset[key] = value
@@ -48,14 +50,17 @@ class GNNInterpreterLoaderWrapper(DataLoader):
         return super().__getattribute__(name)
     
     def draw(self, G, pos=None, ax=None):
-        labels = [G.nodes[node]['label'] for node in G.nodes]
-        nx.draw(G, pos=pos or nx.kamada_kawai_layout(G), ax=ax, node_color=labels)
+        labels = [self.NODE_CLS[G.nodes[node]['label']] for node in G.nodes]
+        nx.draw(G, pos=pos or nx.kamada_kawai_layout(G), ax=ax, node_color=labels, with_labels=True)
+
+    def set_subplot(self,ax):
+        self.ax = ax
 
     def show(self, idx, ax=None, **kwargs):
         data = self[idx]
         print(f"data: {data}")
         print(f"class: {self.GRAPH_CLS[data.G.graph['label']]}")
-        nx.draw_networkx(data.G, with_labels=True, node_color= [[] for _ in data.G.nodes['label']])
+        nx.draw_networkx(data.G, with_labels=True, ax=self.ax, node_color= [[] for _ in data.G.nodes['label']])
         
         #self.draw(data.G, ax=ax, **kwargs)
 

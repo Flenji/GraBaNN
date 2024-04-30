@@ -1,0 +1,10 @@
+torch==2.0
+
+networkx
+torch_geometric
+
+torchmetrics
+matplotlib
+pandas
+numpy
+ipykernel

@@ -145,9 +145,9 @@ class Trainer:
         if connected:
             G = sorted([G.subgraph(c) for c in nx.connected_components(G)], key=lambda g: g.number_of_nodes())[-1]
         if show:
-            self.show(G)
+            show_res = self.show(G)
             plt.show()
-        return G
+        return G, show_res
 
     def show(self, G, ax=None):
         n = G.number_of_nodes()
@@ -159,6 +159,7 @@ class Trainer:
         print(f"{logits=}")
         print(f"{probs=}")
         self.dataset.draw(G, ax=ax)
+        return dict(n=n, m=m, logits=logits, probs=probs)
 
     def save(self, G, cls_idx, root="result"):
         if isinstance(cls_idx, tuple):

@@ -4,6 +4,7 @@ import torch
 from tqdm.auto import trange
 
 from torch_geometric.loader import DataLoader
+from graph_generation.MultiGraphs import MultiGraphs
 import graph_generation.RedRatioGraphs as RedRatioGraphs
 
 from torch import nn
@@ -57,53 +58,41 @@ def fit_model(model, loader, batch_size=32, lr=0.01):
         losses.append(loss.item())
     return np.mean(losses)
 
-def evaluate_model(dataloader,model, batch_size=32):
-    f1 = F1Score(task="multiclass", num_classes=2, average=None)
+def evaluate_model(dataloader,model, num_classes):
+    f1 = F1Score(task="multiclass", num_classes=num_classes, average=None)
     model.eval()
     for batch in dataloader:
         f1(model(batch)['logits'], batch.y)
-    return dict(zip([0,1], f1.compute().tolist()))
-
-def mean_embeddings(dataloader, model, batch_size=32):
-    embeds = [[] for _ in range(len(2))]
-    model.eval()
-    for batch in dataloader:
-        for i, e in enumerate(model(batch)['embeds']):
-            embeds[batch.y[i].item()].append(e)
-    return [torch.stack(e, dim=0).mean(axis=0) for e in embeds]
-
+    return dict(zip(range(num_classes), f1.compute().tolist()))
 
 if __name__=='__main__':
-    dataset = RedRatioGraphs.RedRatioGraphs(10000).getDataset()
+    dataset = MultiGraphs(10000).getDataset()
     # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     device = torch.device('cpu')
-    print(dataset[0].x)
-    print(dataset[0].y)
-    print(dataset[0])
+
     
-
-
+    y = [data.y for data in dataset]
+    classes = np.unique(y)
     train_test_split = 0.8
     train_idx = int(len(dataset)*0.8)
-    print(train_idx)
     train_dataset = dataset[:train_idx]
     test_dataset = dataset[train_idx:]
-
+    node_features = len(dataset[0].x[0])
     print("dataset downloaded")
-
+    num_classes = len(classes)
     train_loader = GNNInterpreterLoaderWrapper(train_dataset, batch_size=64, shuffle=True)
     #pre_train_loader = PrefetchLoader(train_loader, device)
     test_loader = GNNInterpreterLoaderWrapper(test_dataset, batch_size=64, shuffle=False)
     #pre_test_loader = PrefetchLoader(test_loader, device)
     print("batches created")
 
-    model = GCNClassifier(node_features=3,  num_classes =2, hidden_channels = 32).to(device)
+    model = GCNClassifier( node_features=node_features, num_classes=num_classes, hidden_channels = 32).to(device)
 
 
     for epoch in trange(32):
         train_loss = fit_model(model, train_loader, lr=0.001)
-        train_f1 = evaluate_model(train_loader, model)
-        val_f1 = evaluate_model(test_loader, model)
+        train_f1 = evaluate_model(train_loader, model, num_classes=num_classes)
+        val_f1 = evaluate_model(test_loader, model, num_classes=num_classes)
         print(f'Epoch: {epoch:03d}, '
             f'Train Loss: {train_loss:.4f}, '
             f'Train F1: {train_f1}, '
@@ -111,9 +100,9 @@ if __name__=='__main__':
 
     
     
-    torch.save(model.state_dict(), 'model/model_red_class.pt')
+    torch.save(model.state_dict(), 'model/gnni_model_red_class.pt')
     
-    torch.save(train_loader, "model/test_loader_red_ratio.pt")
+    torch.save(train_loader, "model/gnni_test_loader_red_ratio.pt")
 
     # print("done")
     # model, optimizer = model_optimizer_setup(GCNClassifier, device)

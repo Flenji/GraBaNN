@@ -171,7 +171,7 @@ class MultiGraphs():
             x.append(value)
         
         if len(list(nx_graph.edges()))!= 0:
-            edge_index = torch.tensor(list(nx_graph.edges())).t().contiguous()
+            edge_index = torch.tensor(list(nx_graph.edges()),dtype=torch.long).t().contiguous()
         else:
             edge_index = torch.tensor([[],[]], dtype=torch.long)
             
