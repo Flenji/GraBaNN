@@ -39,8 +39,8 @@ def doall(dataset, name):
         test_acc = graph_class_gnn.test(test_loader, model)
         print(f'Epoch: {epoch:03d}, Train Acc: {train_acc:.4f}, Test Acc: {test_acc:.4f}')
 
-    torch.save(model.state_dict(), 'outputs/models/pgexp_model_'+str(name)+ '.pt')
-    torch.save(train_loader, 'outputs/models/pgexp_test_loader_'+str(name)+ '.pt')
+    torch.save(model.state_dict(), 'outputs/models/pgexpi_model_'+str(name)+ '.pt')
+    torch.save(train_loader, 'outputs/models/pgexpi_test_loader_'+str(name)+ '.pt')
 
 if __name__ == '__main__':
     datasets = []
@@ -52,10 +52,10 @@ if __name__ == '__main__':
     # print('RedRatioGraphs done')
     datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
     print('MultiGraphs done')
-    datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
-    print('MultiGraphs done')
-    datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
-    print('HouseSet done')
+    # datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
+    # print('MultiGraphs done')
+    # datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
+    # print('HouseSet done')
     
 
    
@@ -66,6 +66,6 @@ if __name__ == '__main__':
     for dataset in datasets: 
         for epoch in [10,25]:
             for lr in [0.001, 0.003, 0.005]:
-                generate_results('outputs/models/pgexp_model_'+str(dataset["name"])+'.pt', 'outputs/models/pgexp_test_loader_'+str(dataset["name"])+'.pt', epoch=epoch, lr=lr, dataset_name=dataset["name"])
+                generate_results('outputs/models/gnni_model_'+str(dataset["name"])+'.pt', 'outputs/models/gnni_test_loader_'+str(dataset["name"])+'.pt', epoch=epoch, lr=lr, dataset_name=dataset["name"])
                 print(f'{dataset["name"]} epoch {epoch} lr {lr} done')
         

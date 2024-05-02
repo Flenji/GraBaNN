@@ -1,5 +1,6 @@
 import torch_geometric.explain as ex
 import torch
+from explainers.gnninterpreter.models.gcn_classifier import GCNClassifier
 from graph_class_gnn import Graph_Classification_GCN
 
 import matplotlib.pyplot as plt
@@ -13,7 +14,14 @@ def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_p
     dataset = datasetLoader.dataset
     y = [data.y for data in dataset]
     classes = np.unique(y)
-    model = Graph_Classification_GCN(input_nodes=len(dataset[0].x[0]), output_nodes=len(classes))
+    node_classes = len(dataset[0].x[0])
+    model = GCNClassifier(node_features=node_classes,
+                        num_classes=len(classes),
+                        hidden_channels=32)
+
+    model.load_state_dict(torch.load(model_file))
+    # model = GCNClassifier( node_features=node_features, num_classes=num_classes, hidden_channels = 32).to(device)
+    # model = Graph_Classification_GCN(input_nodes=len(dataset[0].x[0]), output_nodes=len(classes))
     model.load_state_dict(torch.load(model_file))
     explainer = ex.Explainer(
         model=model,
