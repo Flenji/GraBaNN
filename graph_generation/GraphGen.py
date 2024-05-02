@@ -22,7 +22,7 @@ class DatasetCreator:
 class Graph:
 
     ## The three defining attributes for graph generation, latter could be used in the future
-    def __init__(self, numOfNodes, numOfEdges, directed, connected):
+    def __init__(self, numOfNodes, numOfEdges, directed):
         self.numOfNodes = numOfNodes
         self.numOfEdges = numOfEdges
         self.Nodes : List[Node] = []
@@ -36,9 +36,6 @@ class Graph:
 
         ## Generate edges from a pre-defined all-containing pool (random tries can be slow)
         if not numOfNodes == 0:
-            if self.connected:
-                G = nx.barabasi_albert_graph((numOfNodes),2)
-            else:
                 pool = []
                 for x in range(self.numOfNodes):
                     for y in range(self.numOfNodes):

@@ -6,6 +6,7 @@ import random
 import uuid
 import networkx as nx
 import math
+import os
 
 ## Labeling:
 ##      [0,0,0] -> negative class (neither blob has a uniform coloring)
@@ -22,8 +23,11 @@ import math
 class DuoSetCreator (GraphGenR.DatasetCreator):
     def __init__(self, numOfGraphs, maxNodes, negativeClass):
         self.numOfGraphs = numOfGraphs
+        self.ID = str(uuid.uuid4())
         self.graphList : List[GraphGenR.Graph] = []
         
+        os.mkdir("./graphs/DuoSet/set-" + self.ID)
+
         ## Generate graphs for datalist
         for i in range(numOfGraphs):
             
@@ -31,9 +35,9 @@ class DuoSetCreator (GraphGenR.DatasetCreator):
             numOfNodes1 = random.randint(2, maxNodes-2)
             numOfNodes2 = (maxNodes-numOfNodes1)
 
-            sG1 = GraphGenR.Graph(numOfNodes1, True)
-            sG2 = GraphGenR.Graph(numOfNodes2, True)
-            UG = GraphGenR.Graph(2,False)
+            sG1 = GraphGenR.Graph(numOfNodes1, True, 1)
+            sG2 = GraphGenR.Graph(numOfNodes2, True, 1)
+            UG = GraphGenR.Graph(2,False, 0.1)
 
             ## This should be the higher scope, but it would look shit, TODo
             if negativeClass:
@@ -53,8 +57,13 @@ class DuoSetCreator (GraphGenR.DatasetCreator):
 
             
             UG.G = nx.disjoint_union(sG1.G, sG2.G)
-            UG.drawG("./graphs/test/graph-" + "test" +".jpg")
+            print("Generated graph with ID: " + UG.ID)
+            print("With class: " + str(UG.labelVec))
+            print()
+            UG.drawG("./graphs/DuoSet/set-" + self.ID +"/graph-" + UG.ID +".jpg")
             self.graphList.append(UG)
+        
+        print("Generated DuoSet dataset with ID: " + self.ID)
 
 
     def bogus(self, subGraph):

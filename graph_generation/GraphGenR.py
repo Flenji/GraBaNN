@@ -7,6 +7,7 @@ from torch_geometric.data import InMemoryDataset
 import matplotlib
 import matplotlib.pyplot
 import random
+import uuid
 
 class DatasetCreator:
     def __init__(self, numOfGraphs):
@@ -21,13 +22,13 @@ class DatasetCreator:
 
 
 class Graph:
-    def __init__(self, numOfNodes, connected):
+    def __init__(self, numOfNodes, connected, param1):
         self.labelVec = []
+        self.ID = str(uuid.uuid4())
         if connected:
-            print(numOfNodes)
-            self.G = nx.barabasi_albert_graph(numOfNodes,1)
+            self.G = nx.barabasi_albert_graph(numOfNodes,param1)
         else:
-            self.G = nx.erdos_renyi_graph(numOfNodes,0.1)
+            self.G = nx.erdos_renyi_graph(numOfNodes,param1)
 
     def initNode(self, n, fv, cl):
         self.G.nodes[n]["FV"] = fv
@@ -41,7 +42,7 @@ class Graph:
         return featureVec
 
 
-    def getTorchData(self, G):
+    def getTorchData(self):
         x = torch.tensor(self.getNodeFeatureVec(), dtype=torch.float)
         y = torch.tensor(self.labelVec)
 

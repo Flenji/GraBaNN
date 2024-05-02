@@ -1,5 +1,8 @@
 import GraphGenR
 import DuoSet
+import os
 
-DuoSet.DuoSetCreator(30,30,True)
+DS = DuoSet.DuoSetCreator(30,30,True).getDataset()
+
+
 
