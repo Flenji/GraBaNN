@@ -90,7 +90,7 @@ class Trainer:
             scores = disc_out["logits"].mean(axis=0).tolist()
             score_dict = {v: scores[k] for k, v in self.dataset.GRAPH_CLS.items()}
             penalty_weight = {'bpw': budget_penalty_weight} if self.budget_penalty else {}
-            bar.set_postfix({'size': size} | penalty_weight | score_dict)
+            # commented out: bar.set_postfix({'size': size} | penalty_weight | score_dict)
             # print(f"{iteration=}, loss={loss.item():.2f}, {size=}, scores={score_dict}")
             self.iteration += 1
         else:
