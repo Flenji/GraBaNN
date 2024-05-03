@@ -1,4 +1,4 @@
-from explainers.gnninterpreter import *
+import explainers.GNNBoundary.gnn_boundary.models as GBModel
 
 import torch
 from tqdm.auto import trange
@@ -86,7 +86,7 @@ def train_and_save(dataset, device, name):
     #pre_test_loader = PrefetchLoader(test_loader, device)
     print(str(name)+ "batches created")
 
-    model = GCNClassifier( node_features=node_features, num_classes=num_classes, hidden_channels = 32).to(device)
+    model = GBModel.GCNClassifier( node_features=node_features, num_classes=num_classes, hidden_channels = 32).to(device)
 
 
     for epoch in trange(32):
@@ -100,8 +100,8 @@ def train_and_save(dataset, device, name):
 
     
     
-    torch.save(model.state_dict(), 'outputs/models/gnni_model_'+str(name)+ '.pt')
-    torch.save(train_loader, 'outputs/models/gnni_test_loader_'+str(name)+ '.pt')
+    torch.save(model.state_dict(), 'outputs/models/gnni2_model_'+str(name)+ '.pt')
+    torch.save(train_loader, 'outputs/models/gnni2_test_loader_'+str(name)+ '.pt')
 
 def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name", temp =0.15):
     datasetLoader = torch.load(dataset_file)
@@ -109,7 +109,7 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
     y = [data.y for data in dataset]
     classes = np.unique(y)
     node_classes = len(dataset[0].x[0])
-    model = GCNClassifier(node_features=node_classes,
+    model = GBModel.GCNClassifier(node_features=node_classes,
                         num_classes=len(classes),
                         hidden_channels=32)
 
@@ -151,9 +151,9 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
         if trainer[c].train(len(dataset)):
             fig, ax = plt.subplots()
             datasetLoader.set_subplot(ax)
-            for threshold in [0.25, 0.5, 0.57]:
+            for threshold in [0.5, 0.7, 0.9]:
                 graph, show_res = trainer[c].evaluate(threshold=threshold, show=True)
-                torch.save(graph, f'outputs/gnni/{dataset_name}_temp_{temp}_threshold_{threshold}_class_{c}.pt')
+                torch.save(graph, f'outputs/gnni2/{dataset_name}_temp_{temp}_threshold_{threshold}_class_{c}.pt')
                 
                 formatted_logits = [f"{logit:.4f}" for logit in show_res["logits"]]
                 formatted_probs = [f"{prob:.4f}" for prob in show_res["probs"]]
@@ -161,7 +161,7 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
                 # Adding dictionary text below the plot
                 ax.set_title( title)
                 ax.axis('off')
-                plt.savefig(f'outputs/gnni/{dataset_name}_temp_{temp}_threshold_{threshold}_class_{c}.png')
+                plt.savefig(f'outputs/gnni2/{dataset_name}_temp_{temp}_threshold_{threshold}_class_{c}.png')
                 
             
             print(f'{dataset_name} class {c} temp {temp} done')
@@ -174,8 +174,8 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
 if __name__=='__main__':
     datasets = []
 
-    datasets.append({"dataset": RedRatioGraphs.RedRatioGraphs(10000).getDataset(), "name": "RedRatioGraphs"})
-    print('RedRatioGraphs done')
+    # datasets.append({"dataset": RedRatioGraphs.RedRatioGraphs(10000).getDataset(), "name": "RedRatioGraphs"})
+    # print('RedRatioGraphs done')
     datasets.append({"dataset":MultiGraphs(10000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
     print('MultiGraphsTrue done')
     datasets.append({"dataset":MultiGraphs(10000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
@@ -184,11 +184,11 @@ if __name__=='__main__':
     print('HouseSet done')
     
 
-    for dataset in datasets:
-        train_and_save(dataset["dataset"], torch.device('cpu'), dataset["name"])
-        print(f'{dataset["name"]} done')
+    # for dataset in datasets:
+    #     train_and_save(dataset["dataset"], torch.device('cpu'), dataset["name"])
+    #     print(f'{dataset["name"]} done')
     
     for dataset in datasets: 
         for temp in [0.1, 0.15, 0.2, 0.4]:
-            generate_and_save_results('outputs/models/gnni_model_'+str(dataset["name"])+'.pt', 'outputs/models/gnni_test_loader_'+str(dataset["name"])+'.pt', dataset_name=dataset["name"], temp=temp)
+            generate_and_save_results('outputs/models/gnni2_model_'+str(dataset["name"])+'.pt', 'outputs/models/gnni2_test_loader_'+str(dataset["name"])+'.pt', dataset_name=dataset["name"], temp=temp)
             print(f'{dataset["name"]} temp {temp} done')
