@@ -19,7 +19,7 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(input_size, hidden_channels)
         self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.conv3 = GCNConv(hidden_channels, hidden_channels)
-        self.lin = Linear(hidden_channels*2, num_classes)
+        self.lin = Linear(hidden_channels*1, num_classes)
         
         #self.Softmax = Softmax(dim=0)
     
@@ -30,12 +30,17 @@ class GCN(torch.nn.Module):
         x = self.conv2(x, edge_index)
         x = x.relu()
         x = self.conv3(x, edge_index)
+        x = x.relu()
 
         # 2. Readout layer
         mean_ = global_mean_pool(x,batch)  # [batch_size, hidden_channels]
         max_ = global_max_pool(x, batch)
         # 3. Apply a final classifier
-        logits = self.lin(torch.cat((mean_, max_),dim=1))#.squeeze()
+        
+        
+        #logits = self.lin(torch.cat((mean_, max_),dim=1))#.squeeze()
+        
+        logits = self.lin(mean_)
         probs = F.softmax(logits, dim=-1)
         #probs = self.Softmax(logits)#, dim = 0)
         #print(logits)
@@ -77,16 +82,21 @@ if __name__ == '__main__':
     parentdir = os.path.dirname(currentdir)
     parentdir = os.path.dirname(parentdir)
     sys.path.insert(0, os.path.join(parentdir,"graph_generation"))
+    sys.path.insert(0, parentdir)
+    
+    import utility_functions
     from MultiGraphs import MultiGraphs
     
-    redRatioGraphs = MultiGraphs(1000)
+    redRatioGraphs = MultiGraphs(1000, negative_class = True)
     dataset = redRatioGraphs.getDataset()
     
     feature_size = len(dataset[0].x[0])
     
-    num_classes = 3
+    num_classes = 4
     
-    model = GCN(feature_size, num_classes, hidden_channels=25)
+    test_set = MultiGraphs(1500,negative_class=True).getDataset()
+    
+    model = GCN(feature_size, num_classes, hidden_channels=16)#25)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.005)#, momentum=0.9, weight_decay=5e-4)
     model.train()
@@ -97,7 +107,10 @@ if __name__ == '__main__':
     for epoch in range(25):
         acc = []
         loss_list = []
+        test_acc = []
+        model.train()
         for data in dataset:
+            
             optimizer.zero_grad()
             logits, probs = model(data.x,data.edge_index)
             prediction = logits.argmax(dim=1)
@@ -108,7 +121,20 @@ if __name__ == '__main__':
             optimizer.step() #gradient
             
             acc.append(prediction.eq(data.y).item())
+        model.eval()    
+        for data in test_set:
+            
+            #optimizer.zero_grad()
+            logits, probs = model(data.x,data.edge_index)
+            prediction = logits.argmax(dim=1)
+            #loss = criterion(logits, data.y.type(torch.LongTensor))
+            
+            #loss_list.append(loss.item())
+            #loss.backward() #backpropagation
+            #optimizer.step() #gradient
+            test_acc.append(prediction.eq(data.y).item())
         print("Epoch:%d  |Loss: %.3f | Acc: %.3f"%(epoch, np.average(loss_list), np.average(acc)))
+        print("test Acc: %.3f"%(np.average(test_acc)))
         if(np.average(loss_list)<smallest_loss):
             print('saving....')
             state = {
