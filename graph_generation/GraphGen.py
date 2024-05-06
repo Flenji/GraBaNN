@@ -33,29 +33,29 @@ class Graph:
         self.labels = []
         self.color_map = []
 
+
         ## Generate edges from a pre-defined all-containing pool (random tries can be slow)
-        if not numOfNodes == 0: 
-            ##print ("Generating " + str(self.numOfNodes) + " Nodes with " + str(self.numOfEdges) + " Edges.")
-            pool = []
-            for x in range(self.numOfNodes):
-                for y in range(self.numOfNodes):
-                    pool.append([x,y])
+        if not numOfNodes == 0:
+                pool = []
+                for x in range(self.numOfNodes):
+                    for y in range(self.numOfNodes):
+                        pool.append([x,y])
 
-            i = 0
-            while ( i < self.numOfEdges):
-                
-                nEdge = pool[(random.randint(0, len(pool)-1))]
+                i = 0
+                while ( i < self.numOfEdges):
+                    
+                    nEdge = pool[(random.randint(0, len(pool)-1))]
 
-                self.edges.append(nEdge)
-                self.Nodes[nEdge[0]].neighbours.append(self.Nodes[nEdge[1]])
-                if not self.directed:
-                    self.Nodes[nEdge[1]].neighbours.append(self.Nodes[nEdge[0]])
-                i += 1
-                pool.remove(nEdge)
+                    self.edges.append(nEdge)
+                    self.Nodes[nEdge[0]].neighbours.append(self.Nodes[nEdge[1]])
+                    if not self.directed:
+                        self.Nodes[nEdge[1]].neighbours.append(self.Nodes[nEdge[0]])
+                    i += 1
+                    pool.remove(nEdge)
 
-                if len(pool) == 0:
-                    ##print("Edge generation pool is empty. Expecting fully connected graph.")
-                    break
+                    if len(pool) == 0:
+                        ##print("Edge generation pool is empty. Expecting fully connected graph.")
+                        break
     
     def getNodeFeatureVec(self):
         featureVec = []

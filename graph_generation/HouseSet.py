@@ -171,7 +171,6 @@ class HouseSetCreator (GraphGen.DatasetCreator):
             datalist.append(g.getTorchData("graph"))
         return datalist
 
-##for i in range(10):
-##    rNodes = random.randint(0, 20)
-##    rEdges = random.randint(0, rNodes)
-##    print(HouseSetCreator(1,rNodes,rEdges).getDataset())
+rNodes = random.randint(0, 20)
+rEdges = random.randint(0, rNodes)
+print(HouseSetCreator(1,rNodes,rEdges).getDataset())
