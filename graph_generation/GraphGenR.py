@@ -48,8 +48,9 @@ class Graph:
 
         ## Since torch does not exactly handles undirected graphs, edge-mirroring is needed for "undirectedness"
         ei = list(self.G.edges())
+
         for edge in list(self.G.edges()):
-            mirrored = edge[::-1]
+            mirrored = list(edge[::-1])
             ei.append(mirrored)
         edge_index = torch.tensor(ei, dtype=torch.long).t().contiguous()
 

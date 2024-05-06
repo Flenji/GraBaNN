@@ -9,8 +9,8 @@ from torch_geometric.nn import GraphConv
 
 from torch_geometric.data import Batch
 from torch_geometric.nn import global_mean_pool
-import HouseSet
-import HouseSet
+#import HouseSet
+import DuoSet as DuoSet
 
 from torch_geometric.loader import DataLoader,PrefetchLoader
 
@@ -22,7 +22,7 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, 32)
         self.conv3 = GCNConv(32, 16)
-        self.conv4 = GCNConv(16, 2)
+        self.conv4 = GCNConv(16, 4)
 
     def forward(self, x, edge_index, batch = None):
 
@@ -86,7 +86,8 @@ def collate(dataList):
     return Batch.from_data_list(dataList)
 
 if __name__=='__main__':
-    dataset = HouseSet.HouseSetCreator(1000,100,60).getDataset()
+    #dataset = HouseSet.HouseSetCreator(10,100,60).getDataset()
+    dataset = DuoSet.DuoSetCreator(3000,40,True,False).getDataset()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     train_test_split = 0.8
     train_idx = int(len(dataset)*0.8)
@@ -99,7 +100,7 @@ if __name__=='__main__':
     pre_test_loader = PrefetchLoader(test_loader, device)
     print("batches created")
     model, optimizer = model_optimizer_setup(GCN, device)
-    for epoch in range(1, 50):
+    for epoch in range(1, 100):
         train(model, optimizer, pre_train_loader)
         train_acc = test(pre_train_loader, model)
         test_acc = test(pre_test_loader, model)

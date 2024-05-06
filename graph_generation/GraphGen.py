@@ -82,6 +82,9 @@ class Graph:
             ##ei = list( dict.fromkeys(ei) )
                 
         edge_index = torch.tensor(ei, dtype=torch.long).t().contiguous()
+        #print(ei)
+        #print("----------------")
+        #print(edge_index)
         
         ## Classification level depends on the dataset generator
         y = []
