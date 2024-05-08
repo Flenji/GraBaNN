@@ -4,7 +4,7 @@ import numpy as np
 import itertools
 import networkx as nx
 import torch_geometric
-
+from matplotlib import pyplot as plt
 
 
 class RedRatioGraphs():
@@ -76,4 +76,5 @@ class RedRatioGraphs():
         feature_vector = data.x.numpy()
     
         # Plot the graph with node colors based on the feature vector
-        nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
+        nx.draw_networkx(g, with_labels=False, node_color=feature_vector)
+        plt.box(False)
