@@ -10,6 +10,7 @@ import networkx as nx
 import torch
 import torch_geometric
 from matplotlib import pyplot as plt
+from torch_geometric.data import Data
 
 def one_hot_encoding(number_node_types):
     """
@@ -62,3 +63,13 @@ def printGraphFromNX(data, nxData):
  
     feature_vector = data.x.numpy()
     nx.draw_networkx(nxData, with_labels=True, node_color=feature_vector)
+    
+    
+def model_wrapper(x, edge_index, model):
+    """
+    Function to match output of GNNInterpreter models to XGNN models.
+    """
+    data = Data(x=x, edge_index= edge_index)
+    forward = model(data)
+    return forward["logits"], forward["probs"]
+
