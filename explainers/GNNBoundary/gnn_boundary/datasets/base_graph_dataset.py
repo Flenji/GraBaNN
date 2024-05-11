@@ -142,9 +142,14 @@ class BaseGraphDataset(pyg.data.InMemoryDataset, ABC):
         model.train()
         losses = []
         for batch in self.loader(batch_size=batch_size, shuffle=True):
+            batch.y = batch.y.type(torch.LongTensor)
             model.zero_grad()  # Clear gradients.
             out = model(batch)  # Perform a single forward pass.
-            loss = criterion(out['logits'], batch.y)  # Compute the loss.
+            try:
+                loss = criterion(out['logits'], batch.y)# Compute the loss.
+            except:
+                print(batch.y)
+                print(out)
             loss.backward()  # Derive gradients.
             optimizer.step()  # Update parameters based on gradients.
             losses.append(loss.item())
