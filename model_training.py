@@ -64,8 +64,8 @@ if __name__ == '__main__':
     #     print(f'{dataset["name"]} done')
 
     for dataset in datasets: 
-        for epoch in [10,25]:
-            for lr in [0.001, 0.003, 0.005]:
+        for epoch in [5,10]:
+            for lr in [0.01, 0.03, 0.05]:
                 generate_results('outputs/models/pgexp_model_'+str(dataset["name"])+'.pt', 'outputs/models/pgexp_test_loader_'+str(dataset["name"])+'.pt', epoch=epoch, lr=lr, dataset_name=dataset["name"])
                 print(f'{dataset["name"]} epoch {epoch} lr {lr} done')
         

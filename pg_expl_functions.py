@@ -26,7 +26,7 @@ def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_p
     for epoch in range(epoch):
         #print epochs
         print('Epoch:', epoch)
-        for i in range(len(dataset)):
+        for i in range(int(len(dataset) / 60)):
             explainer.algorithm.train(model=model,x=dataset[i].x, edge_index=dataset[i].edge_index,target=dataset[i].y, epoch=epoch)
     print('Training done')
     
@@ -44,4 +44,4 @@ def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_p
             
             uf.printGraph(explanation)
             plt.savefig('outputs/pgexp/pgexp_explanation_'+str(epoch)+'_lr_'+str(lr)+'_'+str(dataset_name)+'_'+str(c)+'_'+str(example)+'_fig.png')
-
+            plt.clf()
