@@ -6,7 +6,7 @@ from tqdm.auto import trange
 from torch_geometric.loader import DataLoader
 from graph_generation.MultiGraphs import MultiGraphs
 import graph_generation.RedRatioGraphs as RedRatioGraphs
-
+import graph_generation.DuoSet as DouGraphs
 from torch import nn
 
 from torchmetrics import F1Score
@@ -66,11 +66,17 @@ def evaluate_model(dataloader,model, num_classes):
     return dict(zip(range(num_classes), f1.compute().tolist()))
 
 if __name__=='__main__':
-    dataset = MultiGraphs(10000).getDataset()
+    dataset = DouGraphs.DuoSetCreator(100, 30, True).getDataset(onehot=True)
     # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     device = torch.device('cpu')
 
-    
+    print(len(dataset))
+    print("dataset x:")
+    print(dataset[0].x)
+    print("dataset edge_index:")
+    print(dataset[0].edge_index)
+    print("dataset y:")
+    print(dataset[0].y)
     y = [data.y for data in dataset]
     classes = np.unique(y)
     train_test_split = 0.8

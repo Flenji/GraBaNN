@@ -3,6 +3,7 @@ from typing import List,Dict
 import networkx as nx
 from torch_geometric import data
 from torch_geometric.data import InMemoryDataset
+import torch.nn.functional as F
 
 import matplotlib
 import matplotlib.pyplot
@@ -14,10 +15,10 @@ class DatasetCreator:
         self.numOfGraphs = numOfGraphs
         self.graphList : List[Graph]= []
     
-    def getDataset(self):
+    def getDataset(self, onehot = False):
         datalist = []
         for g in (self.graphList):
-            datalist.append(g.getTorchData())
+            datalist.append(g.getTorchData(onehot))
         return datalist
 
 
@@ -42,9 +43,20 @@ class Graph:
         return featureVec
 
 
-    def getTorchData(self):
+    def getTorchData(self, onehot):
         x = torch.tensor(self.getNodeFeatureVec(), dtype=torch.float)
-        y = torch.tensor(self.labelVec)
+        if onehot:
+            binary_tensor = self.labelVec
+            print(binary_tensor)
+            # Ensure the tensor is in the correct order, with the least significant bit at the end
+            # If your tensor has the LSB at the start, you would use binary_tensor = binary_tensor.flip(dims=[0])
+            powers_of_two = torch.pow(2, torch.arange(len(binary_tensor)))
+            print(powers_of_two)
+            # Multiply each bit by the corresponding power of two and sum up
+            y = torch.dot(binary_tensor * powers_of_two)
+            
+        else:
+            y = torch.tensor(self.labelVec)
 
         ## Since torch does not exactly handles undirected graphs, edge-mirroring is needed for "undirectedness"
         ei = list(self.G.edges())
@@ -52,7 +64,7 @@ class Graph:
             mirrored = edge[::-1]
             ei.append(mirrored)
         edge_index = torch.tensor(ei, dtype=torch.long).t().contiguous()
-
+        
         return data.Data(x=x, edge_index=edge_index, y=y)            
 
 

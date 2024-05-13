@@ -1,5 +1,5 @@
 
-import GraphGenR
+import graph_generation.GraphGenR as GraphGenR
 
 from typing import List,Dict
 import random
@@ -26,7 +26,7 @@ class DuoSetCreator (GraphGenR.DatasetCreator):
         self.ID = str(uuid.uuid4())
         self.graphList : List[GraphGenR.Graph] = []
         
-        os.mkdir("./graphs/DuoSet/set-" + self.ID)
+        #os.mkdir("./graphs/DuoSet/set-" + self.ID)
 
         ## Generate graphs for datalist
         for i in range(numOfGraphs):
@@ -57,13 +57,13 @@ class DuoSetCreator (GraphGenR.DatasetCreator):
 
             
             UG.G = nx.disjoint_union(sG1.G, sG2.G)
-            print("Generated graph with ID: " + UG.ID)
-            print("With class: " + str(UG.labelVec))
-            print()
-            UG.drawG("./graphs/DuoSet/set-" + self.ID +"/graph-" + UG.ID +".jpg")
+            # print("Generated graph with ID: " + UG.ID)
+            # print("With class: " + str(UG.labelVec))
+            # print()
+            # UG.drawG("./graphs/DuoSet/set-" + self.ID +"/graph-" + UG.ID +".jpg")
             self.graphList.append(UG)
         
-        print("Generated DuoSet dataset with ID: " + self.ID)
+        # print("Generated DuoSet dataset with ID: " + self.ID)
 
 
     def bogus(self, subGraph):
