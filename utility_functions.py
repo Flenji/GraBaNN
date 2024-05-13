@@ -9,6 +9,8 @@ Created on Sun Apr 14 13:45:41 2024
 import networkx as nx
 import torch
 import torch_geometric
+from matplotlib import pyplot as plt
+from torch_geometric.data import Data
 
 def one_hot_encoding(number_node_types):
     """
@@ -43,16 +45,31 @@ def convertNxToData(nx_graph, encoding_dict):
     data = torch_geometric.data.Data(x=x, edge_index=edge_index)
     return data
 
-def printGraph( data): 
+def printGraph(data, filename=""): 
     g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
     #nx.draw_networkx(g, with_labels = True)
 
     feature_vector = data.x.numpy()
 
     # Plot the graph with node colors based on the feature vector
-    nx.draw_networkx(g, with_labels=True, node_color=feature_vector)
+    nx.draw_networkx(g, with_labels=False, node_color=feature_vector)
+    plt.box(False)
+    
+    if filename:
+        # Save the graph as a PNG file
+        plt.savefig(filename)
 
 def printGraphFromNX(data, nxData):
  
     feature_vector = data.x.numpy()
     nx.draw_networkx(nxData, with_labels=True, node_color=feature_vector)
+    
+    
+def model_wrapper(x, edge_index, model):
+    """
+    Function to match output of GNNInterpreter models to XGNN models.
+    """
+    data = Data(x=x, edge_index= edge_index)
+    forward = model(data)
+    return forward["logits"], forward["probs"]
+

@@ -50,13 +50,13 @@ if __name__ == '__main__':
 
     # datasets.append({"dataset": RedRatioGraphs(4000).getDataset(), "name": "RedRatioGraphs"})
     # print('RedRatioGraphs done')
-    datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
-    print('MultiGraphs done')
-    datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
-    print('MultiGraphs done')
-    datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
-    print('HouseSet done')
-    
+    # datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
+    # print('MultiGraphs done')
+    # datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
+    # print('MultiGraphs done')
+    # datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
+    # print('HouseSet done')
+    datasets.append
 
    
     # for dataset in datasets:
