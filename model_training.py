@@ -1,6 +1,7 @@
 import graph_class_gnn
-
+import torch_geometric.explain as ex
 import torch
+import matplotlib.pyplot as plt
 
 from graph_generation.MultiGraphs import MultiGraphs
 from graph_generation.RedRatioGraphs import RedRatioGraphs
@@ -10,7 +11,7 @@ import numpy as np
 from torch_geometric.loader import DataLoader
 
 from pg_expl_functions import generate_results
-
+import networkx as nx
 
 def doall(dataset, name):
     device = torch.device('cpu')
@@ -45,19 +46,20 @@ def doall(dataset, name):
 if __name__ == '__main__':
     datasets = []
 
-
+    
 
 
     # datasets.append({"dataset": RedRatioGraphs(4000).getDataset(), "name": "RedRatioGraphs"})
     # print('RedRatioGraphs done')
-    # datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
-    # print('MultiGraphs done')
-    # datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
-    # print('MultiGraphs done')
-    # datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
-    # print('HouseSet done')
+    datasets.append({"dataset":MultiGraphs(4000, negative_class=True).getDataset(), "name": "MultiGraphsTrue"})
+    print('MultiGraphs done')
+    datasets.append({"dataset":MultiGraphs(4000, negative_class=False).getDataset(), "name": "MultiGraphsFalse"})
+    print('MultiGraphs done')
+    datasets.append({"dataset":HouseSet.HouseSetCreator(2000, 40,60).getDataset(), "name": "HouseSet"})
+    print('HouseSet done')
     datasets.append
-
+    
+   
    
     # for dataset in datasets:
     #     doall(dataset["dataset"], dataset["name"])

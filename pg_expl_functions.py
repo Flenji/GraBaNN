@@ -41,7 +41,9 @@ def generate_results(model_file, dataset_file, epoch = 30, lr = 0.003, example_p
             index = class_indexes[c][example]
             explanation = explainer(x=dataset[index].x, edge_index=dataset[index].edge_index, target=dataset[index].y)
             torch.save(explanation, 'outputs/pgexp/pgexp_explanation_'+str(epoch)+'_lr_'+str(lr)+'_'+str(dataset_name)+'_'+str(c)+'_'+str(example)+'.pt')
-            
+            uf.printGraph(dataset[index])
+            plt.savefig('outputs/pgexp/pgexp_explanation_'+str(epoch)+'_lr_'+str(lr)+'_'+str(dataset_name)+'_'+str(c)+'_'+str(example)+'_example_fig.png')
+            plt.clf()
             uf.printGraph(explanation)
             plt.savefig('outputs/pgexp/pgexp_explanation_'+str(epoch)+'_lr_'+str(lr)+'_'+str(dataset_name)+'_'+str(c)+'_'+str(example)+'_fig.png')
             plt.clf()
