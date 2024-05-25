@@ -45,7 +45,7 @@ def convertNxToData(nx_graph, encoding_dict):
     data = torch_geometric.data.Data(x=x, edge_index=edge_index)
     return data
 
-def printGraph(data, filename=""): 
+def printGraph(data, filename="", clear_figure= False): 
     g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
     #nx.draw_networkx(g, with_labels = True)
 
@@ -58,11 +58,14 @@ def printGraph(data, filename=""):
     if filename:
         # Save the graph as a PNG file
         plt.savefig(filename)
+    if clear_figure:
+        plt.clf()
 
 def printGraphFromNX(data, nxData):
  
     feature_vector = data.x.numpy()
     nx.draw_networkx(nxData, with_labels=True, node_color=feature_vector)
+    
     
     
 def model_wrapper(x, edge_index, model):
