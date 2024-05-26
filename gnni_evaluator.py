@@ -126,7 +126,8 @@ def generate_and_save_results(model_file, dataset_file, dataset_name = "no_name"
                 max_nodes=40,
                 num_node_cls=node_classes,
                 temperature=temp,
-                learn_node_feat=True
+                learn_node_feat=True,
+                
             )),
             discriminator=model,
             criterion=WeightedCriterion([

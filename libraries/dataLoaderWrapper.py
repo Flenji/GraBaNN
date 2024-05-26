@@ -23,6 +23,10 @@ class GNNInterpreterLoaderWrapper(DataLoader):
 
     init_done = False
     def initialize(self):
+        # check if the dataset.y tensor is a long tensor if it is a float convert it to a long tensor
+        for obj in self.dataset:
+            if not isinstance(obj.y, torch.LongTensor):
+                obj.y = torch.tensor(obj.y, dtype=torch.long)
         self.init_done = True
         max_class = max(obj.y for obj in self.dataset)
         max_node = len(self.dataset[0].x[0])
