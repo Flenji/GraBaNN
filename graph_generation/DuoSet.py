@@ -67,13 +67,13 @@ class DuoSetCreator (GraphGenR.DatasetCreator):
 
             
             UG.G = nx.disjoint_union(sG1.G, sG2.G)
-            print("Generated graph with ID: " + UG.ID)
-            print("With class: " + str(UG.labelVec))
-            print()
+            # print("Generated graph with ID: " + UG.ID)
+            # print("With class: " + str(UG.labelVec))
+            # print()
             #UG.drawG("./graphs/DuoSet/set-" + self.ID +"/graph-" + UG.ID +".jpg")
             self.graphList.append(UG)
         
-        print("Generated DuoSet dataset with ID: " + self.ID)
+        # print("Generated DuoSet dataset with ID: " + self.ID)
 
 
     def bogus(self, subGraph):
