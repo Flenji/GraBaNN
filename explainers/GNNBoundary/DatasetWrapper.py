@@ -79,14 +79,14 @@ def convertNxToData(nx_graph, encoding_dict):
 class DatasetWrapper(BaseGraphDataset):
 
 
-    def __init__(self, dataset,num_cls = 2,node_feat = 3 , name="datasetWrapper",**kwargs):
+    def __init__(self, dataset,num_cls = 2,node_feat = 3 , name="datasetWrapper", color_dict = {0:"red",1:"green",2:"blue"},**kwargs):
         self.dataset = dataset
         
         
         self.GRAPH_CLS = {i:i for i in range(num_cls)}
         self.encoding_dict = one_hot_encoding(node_feat)
         self.convertNxToData = lambda nx_graph:convertNxToData(nx_graph, self.encoding_dict)
-        self.color_dict = {0:"red",1:"green",2:"blue"}
+        self.color_dict = color_dict
         
         
         super().__init__(name=name)

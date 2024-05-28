@@ -27,8 +27,9 @@ class GCNClassifier(nn.Module):
                                                                       temperature=temperature))
 
                 # 1. Obtain node embeddings
+                
                 h = self.conv(batch.x, batch.edge_index, edge_weight=edge_weight)
-
+                
                 # 2. Readout layer
                 embeds = torch.cat([
                     global_sum_pool_weighted(h, batch=batch.batch, node_weight=node_weight),

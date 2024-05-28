@@ -45,12 +45,14 @@ def convertNxToData(nx_graph, encoding_dict):
     data = torch_geometric.data.Data(x=x, edge_index=edge_index)
     return data
 
-def printGraph(data, filename="", clear_figure= False): 
-    g = torch_geometric.utils.to_networkx(data, to_undirected=True, )
+def printGraph(data, filename="", clear_figure= False,color_dict = None): 
+    g = torch_geometric.utils.to_networkx(data, to_undirected=True)
     #nx.draw_networkx(g, with_labels = True)
 
     feature_vector = data.x.numpy()
 
+    if color_dict:
+        feature_vector = [color_dict[tuple(feature)] for feature in feature_vector]
     # Plot the graph with node colors based on the feature vector
     nx.draw_networkx(g, with_labels=False, node_color=feature_vector)
     plt.box(False)
